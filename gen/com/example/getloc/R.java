@@ -2323,6 +2323,7 @@ containing a value of this type.
         public static final int create_calendar_title=0x7f0a0014;
         public static final int decline=0x7f0a0013;
         public static final int hello_world=0x7f0a0034;
+        public static final int service_name=0x7f0a0036;
         public static final int store_picture_message=0x7f0a0011;
         public static final int store_picture_title=0x7f0a0010;
         /**  Text on a placeholder buy button when Google Play services is not
