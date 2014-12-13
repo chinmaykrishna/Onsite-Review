@@ -24,13 +24,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.getloc.Constants;
 import com.example.getloc.Restaurant;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 
-public class Service extends IntentService{
+public class Service extends IntentService implements
+GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener, 
+LocationListener{
 	private int p;
 	private static String TAG= "Service";
 	private Location location;
@@ -45,6 +53,22 @@ public class Service extends IntentService{
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		
+		int enter, stay;
+	    LocationClient mLocationClient;
+	    Location mCurrentLocation;
+	    LocationRequest mLocationRequest;
+	    final int TWO_MINUTES = 1000 * 60 * 2;
+	    int p = 0;
+		String TAG= "Service";
+		int radius = 1000;
+		String placesSearchStr = null;
+		
+		mLocationClient = new LocationClient(this, this, this);
+		mLocationRequest = LocationRequest.create();
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		mLocationRequest.setInterval(1000 * 3600);
+		mLocationRequest.setFastestInterval(1000 * 600);
 		Bundle extras = intent.getExtras();
 		if (intent.hasExtra(Constants.EXTRA_KEY_LOCATION)) {
 			location = (Location)(extras.get(Constants.EXTRA_KEY_LOCATION));
@@ -131,6 +155,30 @@ public class Service extends IntentService{
 		restBundle.putParcelableArrayList("REST_LIST", restaurant_list);
 		numberIntent.putExtras(restBundle);
 		sendBroadcast(numberIntent);
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -44,17 +44,19 @@ public class MainActivity extends Activity implements
     LocationListener {
  
     // locations objects
+	int enter, stay, flag=0;
     LocationClient mLocationClient;
     Location mCurrentLocation;
     LocationRequest mLocationRequest;
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     private int p;
 	private static String TAG= "Service";
-	private int radius = 500;
+	private int radius = 1000;
 	private String placesSearchStr;
-	private Context context;
+	String answer = "You are near ";
+	long time1;
      
-    TextView txtLong,txtLat,txtLong2,txtLat2;
+    TextView txtLong,txtLat;
     
       @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +72,9 @@ public class MainActivity extends Activity implements
  
 
         mLocationClient = new LocationClient(this, this, this);
- 
-        // 4. create & set LocationRequest for Location update
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        // Set the update interval to 5 seconds
         mLocationRequest.setInterval(1000 * 3600);
-        // Set the fastest update interval to 1 second
         mLocationRequest.setFastestInterval(1000 * 600);
  
          
@@ -84,18 +82,14 @@ public class MainActivity extends Activity implements
      @Override
         protected void onStart() {
             super.onStart();
-            // 1. connect the client.
             mLocationClient.connect();
         }
      @Override
         protected void onStop() {
             super.onStop();
-            // 1. disconnecting the client invalidates it.
             mLocationClient.disconnect();
         }
       
- 
-    // GooglePlayServicesClient.OnConnectionFailedListener
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
@@ -116,10 +110,12 @@ public class MainActivity extends Activity implements
             // get location
             mCurrentLocation = mLocationClient.getLastLocation();
                 try{
-                     
+					if(flag==0)
+                		time1 = System.currentTimeMillis();
+                	flag = 1;
                     // set TextView(s) 
-                    txtLat.setText(mCurrentLocation.getLatitude()+"");
-                    txtLong.setText(mCurrentLocation.getLongitude()+"");
+                    //txtLat.setText(mCurrentLocation.getLatitude()+"");
+                    //txtLong.setText(mCurrentLocation.getLongitude()+"");
                      
                 }catch(NullPointerException npe){
                      
@@ -129,82 +125,102 @@ public class MainActivity extends Activity implements
                     Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent);
                 }
-                String lngVal= String.valueOf(mCurrentLocation.getLongitude());
-        		String latVal= String.valueOf(mCurrentLocation.getLatitude());
-
-        		ArrayList<Restaurant> restaurant_list= new ArrayList<Restaurant>();
-
-        		try{
-        			placesSearchStr= "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
-
-        				    "location="+URLEncoder.encode(latVal,"UTF-8")+","+URLEncoder.encode(lngVal,"UTF-8")
-        				    +"&radius="+URLEncoder.encode(String.valueOf(radius),"UTF-8") +
-        				    "&types="+URLEncoder.encode("restaurant","UTF-8")+
-        				    "&key="+URLEncoder.encode("AIzaSyCtO2knQl51Fpmq0XlxA7LTnuJZTZw6CEE","UTF-8");
-        		}
-        		catch(UnsupportedEncodingException e)
+                while(radius<=1500)
         		{
-        			e.printStackTrace();
-        		}
-        		StringBuilder placesBuilder= new StringBuilder();
-        		HttpClient placesClient=new DefaultHttpClient();
-        		try {
-        			HttpGet placesGet = new HttpGet(placesSearchStr);
-        			Log.d(TAG, placesSearchStr);
-        			HttpResponse placesResponse = placesClient.execute(placesGet);
-        			StatusLine placesSS= placesResponse.getStatusLine();
-        			if(placesSS.getStatusCode()==200)
-        			{
-        				HttpEntity placesEntity= placesResponse.getEntity();
-        				InputStream placesContent = placesEntity.getContent();
-        				InputStreamReader placesInput = new InputStreamReader(placesContent);
-        				BufferedReader placesReader = new BufferedReader(placesInput);
-        				String lineIn;
-        				while ((lineIn = placesReader.readLine()) != null) {
-        					
-        					placesBuilder.append(lineIn);
-        				}
-        			}
-
-        		} catch (Exception e) {
-        			e.printStackTrace();
-        		}
-
-        		String result= placesBuilder.toString();
-        		Log.d(TAG, result);
-        		try {
-        			JSONObject resultObject = new JSONObject(result);
-        			JSONArray placesArray = resultObject.getJSONArray("results");
-
-        			p=placesArray.length();
-        			Log.d(TAG, String.valueOf(placesArray.length()));
-
-        			for(int i=0; i<p;i++)
-        			{
-        				String name;
-        				double latitude;
-        				double longitude;
-        				Restaurant restaurant= new Restaurant();
-
-        				JSONObject placeObject= placesArray.getJSONObject(i);
-        				JSONObject loc= placeObject.getJSONObject("geometry").getJSONObject("location");
-
-        				latitude=Double.valueOf(loc.getString("lng"));
-        				longitude=Double.valueOf(loc.getString("lng"));
-        				name=placeObject.getString("name");
-        				Log.d("NAME", name);
-        				restaurant.setName(name);
-        				restaurant.setLatitude(latitude);
-        				restaurant.setLongitude(longitude);
-        				restaurant_list.add(restaurant);
-
-        			}
-        		} catch (JSONException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
+	                String lngVal= String.valueOf(mCurrentLocation.getLongitude());
+	        		String latVal= String.valueOf(mCurrentLocation.getLatitude());
+	
+	        		ArrayList<Restaurant> restaurant_list= new ArrayList<Restaurant>();
+	        		
+	        		try{
+	        			placesSearchStr= "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+	
+	        				    "location="+URLEncoder.encode(latVal,"UTF-8")+","+URLEncoder.encode(lngVal,"UTF-8")
+	        				    +"&radius="+URLEncoder.encode(String.valueOf(radius),"UTF-8") +
+	        				    "&types="+URLEncoder.encode("restaurant","UTF-8")+
+	        				    "&key="+URLEncoder.encode("AIzaSyCtO2knQl51Fpmq0XlxA7LTnuJZTZw6CEE","UTF-8");
+	        		}
+	        		catch(UnsupportedEncodingException e)
+	        		{
+	        			e.printStackTrace();
+	        		}
+	        		StringBuilder placesBuilder= new StringBuilder();
+	        		HttpClient placesClient=new DefaultHttpClient();
+	        		try {
+	        			HttpGet placesGet = new HttpGet(placesSearchStr);
+	        			Log.d(TAG, placesSearchStr);
+	        			HttpResponse placesResponse = placesClient.execute(placesGet);
+	        			StatusLine placesSS= placesResponse.getStatusLine();
+	        			if(placesSS.getStatusCode()==200)
+	        			{
+	        				HttpEntity placesEntity= placesResponse.getEntity();
+	        				InputStream placesContent = placesEntity.getContent();
+	        				InputStreamReader placesInput = new InputStreamReader(placesContent);
+	        				BufferedReader placesReader = new BufferedReader(placesInput);
+	        				String lineIn;
+	        				while ((lineIn = placesReader.readLine()) != null) {
+	        					
+	        					placesBuilder.append(lineIn);
+	        				}
+	        			}
+	
+	        		} catch (Exception e) {
+	        			e.printStackTrace();
+	        		}
+	
+	        		String result= placesBuilder.toString();
+	        		try {
+	        			JSONObject resultObject = new JSONObject(result);
+	        			JSONArray placesArray = resultObject.getJSONArray("results");
+	
+	        			p=placesArray.length();
+	        			Log.d(TAG, String.valueOf(placesArray.length()));
+	        			Log.d("radius", radius+"");
+	        			if(radius == 1000)
+	        			{
+	        				Log.d("rad1", radius+"");
+	        				radius = 1500;
+	        				continue;
+	        			}
+	        			if(radius==1500 && p<1)
+	        			{
+	        				Log.d("rad2", radius+"");
+	        				radius = 2000;
+	        				break;
+	        			}else if(radius==1500 && p>1)
+	        			{
+	        				radius = 2000;
+	        			}
+	        			
+	        			for(int i=0; i<p;i++)
+	        			{
+	        				String name;
+	        				double latitude;
+	        				double longitude;
+	        				Restaurant restaurant= new Restaurant();
+	
+	        				JSONObject placeObject= placesArray.getJSONObject(i);
+	        				JSONObject loc= placeObject.getJSONObject("geometry").getJSONObject("location");
+	
+	        				latitude=Double.valueOf(loc.getString("lng"));
+	        				longitude=Double.valueOf(loc.getString("lng"));
+	        				name=placeObject.getString("name");
+	        				answer = answer + name;
+	        				Log.d("NAME", name);
+	        				restaurant.setName(name);
+	        				restaurant.setLatitude(latitude);
+	        				restaurant.setLongitude(longitude);
+	        				restaurant_list.add(restaurant);
+	        			}
+	        			
+	        		} catch (JSONException e) {
+	        			e.printStackTrace();
+	        		}
+	        		
+	        	}
+                txtLat.setText(answer);
+        		Log.d("result", answer);
         }
- 
     }
     @Override
     public void onDisconnected() {
@@ -217,9 +233,9 @@ public class MainActivity extends Activity implements
     public void onLocationChanged(Location location) {
         Toast.makeText(this, "Location changed.", Toast.LENGTH_SHORT).show();
         mCurrentLocation = mLocationClient.getLastLocation();
-        txtLat.setText(mCurrentLocation.getLatitude()+"");
+        //txtLat.setText(mCurrentLocation.getLatitude()+"");
  
-        txtLong.setText(mCurrentLocation.getLongitude()+"");
+        //txtLong.setText(mCurrentLocation.getLongitude()+"");
     }
     
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
