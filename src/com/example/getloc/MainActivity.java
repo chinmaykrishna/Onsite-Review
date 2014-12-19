@@ -51,8 +51,9 @@ public class MainActivity extends Activity implements
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     private int p;
 	private static String TAG= "Service";
-	private int radius = 1000;
+	private int radius = 10;
 	private String placesSearchStr;
+	String restaurantName;
 	String answer = "You are near ";
 	long time1;
      
@@ -125,7 +126,7 @@ public class MainActivity extends Activity implements
                     Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent);
                 }
-                while(radius<=1500)
+                while(radius<=15)
         		{
 	                String lngVal= String.valueOf(mCurrentLocation.getLongitude());
 	        		String latVal= String.valueOf(mCurrentLocation.getLatitude());
@@ -176,20 +177,28 @@ public class MainActivity extends Activity implements
 	        			p=placesArray.length();
 	        			Log.d(TAG, String.valueOf(placesArray.length()));
 	        			Log.d("radius", radius+"");
-	        			if(radius == 1000)
+	        			if(radius == 10 && p<1)
 	        			{
 	        				Log.d("rad1", radius+"");
-	        				radius = 1500;
+	        				radius = 15;
 	        				continue;
 	        			}
-	        			if(radius==1500 && p<1)
+	        			else if(radius == 10 && p>=1)
+	        			{
+	        				Log.d("rad1", radius+"");
+	        				radius = 20;
+	        			}
+	        			if(radius==15 && p<1)
 	        			{
 	        				Log.d("rad2", radius+"");
-	        				radius = 2000;
+	        				radius = 20;
+	        				txtLat.setText("No restaurants found");
+	        				mLocationClient = null;
 	        				break;
-	        			}else if(radius==1500 && p>1)
+	        			}else if(radius==15 && p>=1)
 	        			{
-	        				radius = 2000;
+	        				radius = 20;
+	        				mLocationClient = null;
 	        			}
 	        			
 	        			for(int i=0; i<p;i++)
@@ -205,6 +214,7 @@ public class MainActivity extends Activity implements
 	        				latitude=Double.valueOf(loc.getString("lng"));
 	        				longitude=Double.valueOf(loc.getString("lng"));
 	        				name=placeObject.getString("name");
+	        				restaurantName = name;
 	        				answer = answer + name;
 	        				Log.d("NAME", name);
 	        				restaurant.setName(name);
