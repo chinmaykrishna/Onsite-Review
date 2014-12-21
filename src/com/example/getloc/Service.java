@@ -58,7 +58,6 @@ LocationListener{
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-		int enter, stay;
 	    LocationClient mLocationClient;
 	    Location mCurrentLocation;
 	    LocationRequest mLocationRequest;
@@ -67,19 +66,34 @@ LocationListener{
 		String TAG= "Service";
 		int radius = 1000;
 		String placesSearchStr = null;
-		
-		mLocationClient = new LocationClient(this, this, this);
-		mLocationRequest = LocationRequest.create();
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		mLocationRequest.setInterval(1000 * 3600);
-		mLocationRequest.setFastestInterval(1000 * 600);
+ 
+
+        mLocationClient = new LocationClient(this, this, this);
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000 * 3600);
+        mLocationRequest.setFastestInterval(1000 * 600);
 		Bundle extras = intent.getExtras();
 		if (intent.hasExtra(Constants.EXTRA_KEY_LOCATION)) {
 			location = (Location)(extras.get(Constants.EXTRA_KEY_LOCATION));
 			radius = extras.getInt(Constants.EXTRA_KEY_RADIUS, Constants.DEFAULT_RADIUS);
 		}
+	}
 
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
 		String lngVal= String.valueOf(location.getLongitude());
 		String latVal= String.valueOf(location.getLatitude());
 
@@ -159,23 +173,6 @@ LocationListener{
 		restBundle.putParcelableArrayList("REST_LIST", restaurant_list);
 		numberIntent.putExtras(restBundle);
 		sendBroadcast(numberIntent);
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult result) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onConnected(Bundle connectionHint) {
-		// TODO Auto-generated method stub
 		
 	}
 
