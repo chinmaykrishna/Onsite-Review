@@ -38,21 +38,18 @@ import android.widget.Toast;
 import com.example.getloc.Constants;
 import com.example.getloc.Restaurant;
  
-public class MainActivity extends Activity implements
-    GooglePlayServicesClient.ConnectionCallbacks,
-    GooglePlayServicesClient.OnConnectionFailedListener, 
-    LocationListener {
+public class MainActivity extends Activity {
  
     // locations objects
 	int enter, stay, flag=0;
-    LocationClient mLocationClient;
-    Location mCurrentLocation;
-    LocationRequest mLocationRequest;
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
-    private int p;
-	private static String TAG= "Service";
-	private int radius = 10;
-	private String placesSearchStr;
+	//    LocationClient mLocationClient;
+	//    Location mCurrentLocation;
+	//    LocationRequest mLocationRequest;
+//    private static final int TWO_MINUTES = 1000 * 60 * 2;
+//    private int p;
+//	private static String TAG= "Service";
+//	private int radius = 10;
+//	private String placesSearchStr;
 	String restaurantName;
 	String answer = "You are near ";
 	long time1;
@@ -63,35 +60,37 @@ public class MainActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        StrictMode.ThreadPolicy policy = new
-       		 StrictMode.ThreadPolicy.Builder().permitAll().build();
-       		        StrictMode.setThreadPolicy(policy);
-     
+//        StrictMode.ThreadPolicy policy = new
+//       		 StrictMode.ThreadPolicy.Builder().permitAll().build();
+//       		        StrictMode.setThreadPolicy(policy);
+        Intent intent = new Intent(this, Service.class);
+    	startService(intent);
+//       		i.putExtra("KEY1", "Value to be used by the service");
          
         txtLong = (TextView) findViewById(R.id.txtLong);
         txtLat = (TextView) findViewById(R.id.txtLat);
  
-
+/*
         mLocationClient = new LocationClient(this, this, this);
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1000 * 3600);
-        mLocationRequest.setFastestInterval(1000 * 600);
+        mLocationRequest.setFastestInterval(1000 * 600);*/
  
          
     }
      @Override
         protected void onStart() {
             super.onStart();
-            mLocationClient.connect();
+            //mLocationClient.connect();
         }
      @Override
         protected void onStop() {
             super.onStop();
-            mLocationClient.disconnect();
+            //mLocationClient.disconnect();
         }
       
-    @Override
+    /*@Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
     }
@@ -100,7 +99,7 @@ public class MainActivity extends Activity implements
     @Override
     public void onConnected(Bundle arg0) {
          
-        if(mLocationClient != null)
+        /*if(mLocationClient != null)
             mLocationClient.requestLocationUpdates(mLocationRequest,  this);
         
         
@@ -229,9 +228,9 @@ public class MainActivity extends Activity implements
 	        		
 	        	}
                 txtLat.setText(answer);
-        		Log.d("result", answer);
-        }
-    }
+        		Log.d("result", answer);*/
+        //}
+    /*}
     @Override
     public void onDisconnected() {
         Toast.makeText(this, "Disconnected.", Toast.LENGTH_SHORT).show();
@@ -287,5 +286,5 @@ public class MainActivity extends Activity implements
           return provider2 == null;
         }
         return provider1.equals(provider2);
-    }
+    }*/
 }
