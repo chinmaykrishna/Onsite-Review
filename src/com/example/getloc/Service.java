@@ -27,6 +27,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -46,8 +47,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener, 
 LocationListener{
 	private static String TAG= "getloc";
-	private Location location;
-	private Context context;
+	private final Context mContext;
 	int enter, stay, flag=0;
 	LocationClient mLocationClient;
     Location mCurrentLocation;
@@ -59,11 +59,39 @@ LocationListener{
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
 	String answer, restaurantName;
-	
+	// flag for GPS status
+    boolean isGPSEnabled = false;
+ 
+    // flag for network status
+    boolean isNetworkEnabled = false;
+ 
+    // flag for GPS status
+    boolean canGetLocation = false;
+ 
+    Location location;
+    double latitude;
+    double longitude;
+ 
+    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
 
-	public Service() {
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+    protected LocationManager locationManager;
+
+	public Service(Context context) {
 		super(TAG);
+		this.mContext = context;
+        locationMethod();
 		// TODO Auto-generated constructor stub
+	}
+
+	private void locationMethod() {
+		mLocationClient = new LocationClient(this, this, this);
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000 * 3600);
+        mLocationRequest.setFastestInterval(1000 * 600);
+//		Bundle extras = intent.getExtras();
+		
 	}
 
 	@Override
@@ -72,16 +100,16 @@ LocationListener{
 	    
  
 		Log.d(TAG, "test");
-        mLocationClient = new LocationClient(this, this, this);
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(1000 * 3600);
-        mLocationRequest.setFastestInterval(1000 * 600);
-		Bundle extras = intent.getExtras();
-		if (intent.hasExtra(Constants.EXTRA_KEY_LOCATION)) {
-			location = (Location)(extras.get(Constants.EXTRA_KEY_LOCATION));
-			radius = extras.getInt(Constants.EXTRA_KEY_RADIUS, Constants.DEFAULT_RADIUS);
-		}
+//        mLocationClient = new LocationClient(this, this, this);
+//        mLocationRequest = LocationRequest.create();
+//        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        mLocationRequest.setInterval(1000 * 3600);
+//        mLocationRequest.setFastestInterval(1000 * 600);
+//		Bundle extras = intent.getExtras();
+//		if (intent.hasExtra(Constants.EXTRA_KEY_LOCATION)) {
+//			location = (Location)(extras.get(Constants.EXTRA_KEY_LOCATION));
+//			radius = extras.getInt(Constants.EXTRA_KEY_RADIUS, Constants.DEFAULT_RADIUS);
+//		}
 	}
 
 	@Override
@@ -98,6 +126,7 @@ LocationListener{
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
+		Log.d(TAG, "test2");
 		if(mLocationClient != null)
             mLocationClient.requestLocationUpdates(mLocationRequest,  this);
         
@@ -236,5 +265,65 @@ LocationListener{
 		// TODO Auto-generated method stub
 		
 	}
+/*	 public Location getLocation() {
+	        try {
+	            locationManager = (LocationManager) mContext
+	                    .getSystemService(LOCATION_SERVICE);
+	 
+	            // getting GPS status
+	            isGPSEnabled = locationManager
+	                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+	 
+	            // getting network status
+	            isNetworkEnabled = locationManager
+	                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+	 
+	            if (!isGPSEnabled && !isNetworkEnabled) {
+	                // no network provider is enabled
+	            } else {
+	                this.canGetLocation = true;
+	                // First get location from Network Provider
+	                if (isNetworkEnabled) {
+	                    locationManager.requestLocationUpdates(
+	                            LocationManager.NETWORK_PROVIDER,
+	                            MIN_TIME_BW_UPDATES,
+	                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+	                    Log.d("Network", "Network");
+	                    if (locationManager != null) {
+	                        location = locationManager
+	                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+	                        if (location != null) {
+	                            latitude = location.getLatitude();
+	                            longitude = location.getLongitude();
+	                        }
+	                    }
+	                }
+	                // if GPS Enabled get lat/long using GPS Services
+	                if (isGPSEnabled) {
+	                    if (location == null) {
+	                        locationManager.requestLocationUpdates(
+	                                LocationManager.GPS_PROVIDER,
+	                                MIN_TIME_BW_UPDATES,
+	                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+	                        Log.d("GPS Enabled", "GPS Enabled");
+	                        if (locationManager != null) {
+	                            location = locationManager
+	                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	                            if (location != null) {
+	                                latitude = location.getLatitude();
+	                                longitude = location.getLongitude();
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	 
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	 
+	        return location;
+	    }*/
+	     
 
 }

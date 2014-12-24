@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 	//    LocationRequest mLocationRequest;
 //    private static final int TWO_MINUTES = 1000 * 60 * 2;
 //    private int p;
-//	private static String TAG= "Service";
+//	private static String TAG= "Service1";
 //	private int radius = 10;
 //	private String placesSearchStr;
 	String restaurantName;
@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 //        StrictMode.ThreadPolicy policy = new
 //       		 StrictMode.ThreadPolicy.Builder().permitAll().build();
 //       		        StrictMode.setThreadPolicy(policy);
-        Intent intent = new Intent(this, Service.class);
+        Intent intent = new Intent(this, LocationService.class);
     	startService(intent);
 //       		i.putExtra("KEY1", "Value to be used by the service");
          
