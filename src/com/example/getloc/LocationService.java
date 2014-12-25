@@ -43,7 +43,7 @@ public class LocationService extends Service
 	   int radius = 10;
 	   String placesSearchStr = null;
 	   TextView txtLong,txtLat;
-	   String answer, restaurantName;
+	   String answer = "You are near", restaurantName;
 
        Intent intent;
        int counter = 0;
@@ -229,7 +229,6 @@ public class MyLocationListener implements LocationListener
 	        			{
 	        				Log.d(TAG, radius+"m");
 	        				radius = 20;
-	        				txtLat.setText("No restaurants found");
 	        				break;
 	        			}else if(radius==15 && p>=1)
 	        			{
@@ -263,35 +262,33 @@ public class MyLocationListener implements LocationListener
 	        		}
 	        		
 	        	}
-             txtLat.setText(answer);
-     		Log.d(TAG, answer);
-            
-            
-            
-            intent.putExtra("Latitude", loc.getLatitude());
-            intent.putExtra("Longitude", loc.getLongitude());     
-            intent.putExtra("Provider", loc.getProvider());                 
-            sendBroadcast(intent);          
-
-        }                               
-    }
-
-    public void onProviderDisabled(String provider)
-    {
-        Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
-    }
-
-
-    public void onProviderEnabled(String provider)
-    {
-        Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
-    }
-
-
-    public void onStatusChanged(String provider, int status, Bundle extras)
-    {
-
-    }
-
-}
+	     		Log.d(TAG, "finished");
+	            
+	            intent.putExtra("Latitude", loc.getLatitude());
+	            intent.putExtra("Longitude", loc.getLongitude());     
+	            intent.putExtra("Provider", loc.getProvider());                 
+	            sendBroadcast(intent);
+	     		onDestroy();
+	
+	        }                               
+	    }
+	
+	    public void onProviderDisabled(String provider)
+	    {
+	        Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
+	    }
+	
+	
+	    public void onProviderEnabled(String provider)
+	    {
+	        Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+	    }
+	
+	
+	    public void onStatusChanged(String provider, int status, Bundle extras)
+	    {
+	
+	    }
+	
+	}
 }
