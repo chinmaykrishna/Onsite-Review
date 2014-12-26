@@ -39,10 +39,10 @@ public class LocationService extends IntentService
 	private static String TAG= "getloc";
 	int p = 0;
 	long time1;
-	int radius = 10;
+	int radius = 500;
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
-	String answer = "You are near", restaurantName = null;
+	String answer = "You are near ", restaurantName = null;
 	
 	Intent intent;
 	int counter = 0;
@@ -142,7 +142,7 @@ public class LocationService extends IntentService
 	            Log.d("long", lngVal);
 	            
 	            
-	            while(radius<=15)
+	            while(radius<=750)
 	     		{
 	                ArrayList<Restaurant> restaurant_list= new ArrayList<Restaurant>();
 	        		
@@ -190,25 +190,25 @@ public class LocationService extends IntentService
 	        			p=placesArray.length();
 	        			Log.d(TAG, String.valueOf(placesArray.length()));
 	        			Log.d(TAG, radius+"");
-	        			if(radius == 10 && p<1)
+	        			if(radius == 500 && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 15;
+	        				radius = 750;
 	        				continue;
 	        			}
-	        			else if(radius == 10 && p>=1)
+	        			else if(radius == 500 && p>=1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 20;
+	        				radius = 1000;
 	        			}
-	        			if(radius==15 && p<1)
+	        			if(radius==750 && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 20;
+	        				radius = 1000;
 	        				break;
-	        			}else if(radius==15 && p>=1)
+	        			}else if(radius==750 && p>=1)
 	        			{
-	        				radius = 20;
+	        				radius = 1000;
 	        			}
 	        			
 	        			for(int i=0; i<p;i++)
@@ -225,7 +225,7 @@ public class LocationService extends IntentService
 	        				longitude=Double.valueOf(loc1.getString("lng"));
 	        				name=placeObject.getString("name");
 	        				restaurantName = name;
-	        				answer = answer + name;
+	        				answer = answer + name + " " ;
 	        				Log.d(TAG, name);
 	        				restaurant.setName(name);
 	        				restaurant.setLatitude(latitude);
@@ -241,7 +241,7 @@ public class LocationService extends IntentService
 	            intent = new Intent();
 	            intent.setAction("Response");
 	            intent.addCategory(Intent.CATEGORY_DEFAULT);
-	            intent.putExtra("Restaurant", restaurantName);
+	            intent.putExtra("Restaurant", answer);
 	            intent.putExtra("Longitude", lngVal);  
 	            intent.putExtra("Longitude", lngVal);   
 	            sendBroadcast(intent);
