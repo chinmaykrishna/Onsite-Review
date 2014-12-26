@@ -42,7 +42,7 @@ public class LocationService extends IntentService
 	int radius = 10;
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
-	String answer = "You are near", restaurantName;
+	String answer = "You are near", restaurantName = null;
 	
 	Intent intent;
 	int counter = 0;

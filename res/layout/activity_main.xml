@@ -7,7 +7,7 @@
         android:id="@+id/txtLat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lat"
+        android:text="Searching..."
         android:textSize="24dp" />
  
 </RelativeLayout>

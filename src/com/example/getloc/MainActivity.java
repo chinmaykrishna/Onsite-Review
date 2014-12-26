@@ -13,10 +13,10 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
  
 	private static String TAG= "MainActivity";
-	String restaurantName;
+	String restaurantName = null;
 	String answer = "You are near ";
 	long time1;
-	String latitude, longitude;
+	String latitude = null, longitude = null;
     TextView txtLong,txtLat;
     
     private MyBroadcastReceiver receiver;
@@ -63,7 +63,15 @@ public class MainActivity extends Activity {
    	   latitude = intent.getStringExtra("Latitude");
    	   longitude = intent.getStringExtra("Longitude");
    	   restaurantName = intent.getStringExtra("Restaurant");
- 	   txtLat.setText(restaurantName);
+   	   if(restaurantName!= null)
+   	   {
+   		   Log.d(TAG, restaurantName);
+   		   txtLat.setText(restaurantName);
+   	   }
+   	   else
+   	   {
+   		   txtLat.setText("Restaurant Not Found");
+   	   }
    	  }
    }
 }
