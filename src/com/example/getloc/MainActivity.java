@@ -15,9 +15,11 @@ public class MainActivity extends Activity {
 	private static String TAG= "MainActivity";
 	String restaurantName = null;
 	String answer = "You are near ";
+	String notFound = "Restaurant not found";
 	long time1;
 	String latitude = null, longitude = null;
     TextView txtLong,txtLat;
+    
     
     private MyBroadcastReceiver receiver;
       
@@ -63,6 +65,7 @@ public class MainActivity extends Activity {
    	   latitude = intent.getStringExtra("Latitude");
    	   longitude = intent.getStringExtra("Longitude");
    	   restaurantName = intent.getStringExtra("Restaurant");
+   	   txtLat = (TextView) findViewById(R.id.txtLat);
    	   if(restaurantName!= null)
    	   {
    		   Log.d(TAG, restaurantName);
@@ -70,7 +73,7 @@ public class MainActivity extends Activity {
    	   }
    	   else
    	   {
-   		   txtLat.setText("Restaurant Not Found");
+   		   txtLat.setText("Restaurant not found");
    	   }
    	  }
    }
