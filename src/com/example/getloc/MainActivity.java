@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(this, LocationService.class);
     	startService(intent);
+    	Intent intent1 = new Intent(this,AlarmStartService.class);
+    	startService(intent1);
 //       		i.putExtra("KEY1", "Value to be used by the service");
     	receiver = new MyBroadcastReceiver();
     	IntentFilter intentFilter = new IntentFilter("Response");
