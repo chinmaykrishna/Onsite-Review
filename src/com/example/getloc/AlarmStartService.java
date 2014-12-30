@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class AlarmStartService extends IntentService{
-	Alarm alarm= new Alarm();
+	LocationServiceStartAlarm alarm= new LocationServiceStartAlarm();
 
 	public AlarmStartService() {
 		super("AlarmStart");
