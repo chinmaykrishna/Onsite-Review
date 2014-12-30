@@ -39,10 +39,10 @@ public class LocationService extends IntentService
 	private static String TAG= "getloc";
 	int p = 0;
 	long time1;
-	int radius = 500;
+	int radius;
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
-	String answer = "You are near ", restaurantName = null;
+	String answer = "", restaurantName = null;
 	
 	Intent intent;
 	int counter = 0;
@@ -68,6 +68,8 @@ public class LocationService extends IntentService
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
           		        StrictMode.setThreadPolicy(policy);
+		radius = 500;
+		restaurantName = null;
     }
 
     @Override
@@ -241,11 +243,13 @@ public class LocationService extends IntentService
 	            intent = new Intent();
 	            intent.setAction("Response");
 	            intent.addCategory(Intent.CATEGORY_DEFAULT);
+	            intent.putExtra("flag", "res");
 	            intent.putExtra("Restaurant", answer);
 	            intent.putExtra("Longitude", lngVal);  
 	            intent.putExtra("Longitude", lngVal);   
 	            sendBroadcast(intent);
-	     		Log.d(TAG, "finished");	            
+	     		Log.d(TAG, "finished");	     
+	     		locationManager.removeUpdates(listener);
 	        }
 	    }
 		
