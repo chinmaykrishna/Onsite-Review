@@ -39,7 +39,13 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+<<<<<<< HEAD
         
+=======
+    	Intent intent1 = new Intent(this,AlarmStartService.class);
+    	startService(intent1);
+//       		i.putExtra("KEY1", "Value to be used by the service");
+>>>>>>> cd4744c8e494cc4721e8663ee69acf50d70e397b
     	receiver = new MyBroadcastReceiver();
     	
     	IntentFilter intentFilter = new IntentFilter("Response");
