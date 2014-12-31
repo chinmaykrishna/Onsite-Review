@@ -42,7 +42,7 @@ public class LocationService extends IntentService
 	int radius;
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
-	String answer = "", restaurantName = null;
+	String answer = null, restaurantName = null;
 	
 	Intent intent;
 	int counter = 0;
@@ -68,8 +68,9 @@ public class LocationService extends IntentService
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
           		        StrictMode.setThreadPolicy(policy);
-		radius = 500;
+		radius = 10;
 		restaurantName = null;
+		answer = null;
     }
 
     @Override
@@ -144,7 +145,7 @@ public class LocationService extends IntentService
 	            Log.d("long", lngVal);
 	            
 	            
-	            while(radius<=750)
+	            while(radius<=15)
 	     		{
 	                ArrayList<Restaurant> restaurant_list= new ArrayList<Restaurant>();
 	        		
@@ -192,25 +193,25 @@ public class LocationService extends IntentService
 	        			p=placesArray.length();
 	        			Log.d(TAG, String.valueOf(placesArray.length()));
 	        			Log.d(TAG, radius+"");
-	        			if(radius == 500 && p<1)
+	        			if(radius == 10 && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 750;
+	        				radius = 15;
 	        				continue;
 	        			}
-	        			else if(radius == 500 && p>=1)
+	        			else if(radius == 10 && p>=1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 1000;
+	        				radius = 20;
 	        			}
-	        			if(radius==750 && p<1)
+	        			if(radius==15 && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 1000;
+	        				radius = 20;
 	        				break;
-	        			}else if(radius==750 && p>=1)
+	        			}else if(radius==15 && p>=1)
 	        			{
-	        				radius = 1000;
+	        				radius = 20;
 	        			}
 	        			
 	        			for(int i=0; i<p;i++)
