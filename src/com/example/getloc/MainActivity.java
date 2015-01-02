@@ -30,22 +30,39 @@ public class MainActivity extends Activity {
     public static final String CHECK1 = "restaurant1"; 
     public static final String TIME = "time";
     public static final String REVIEW = "review";
+    public static final String ACTIVE_CHECK ="active_check";
     SharedPreferences shared;
     
     private MyBroadcastReceiver receiver;
       
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	
+    	final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+    	 
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                
+                // fix our issues for app crash saving of shared preference
+                SharedPreferences sp = getSharedPreferences(ACTIVE_CHECK, Context.MODE_PRIVATE);
+                Editor ed = sp.edit();
+                ed.putBoolean("active", false);
+                ed.commit();
+                 
+                // Handle everthing else
+                defaultHandler.uncaughtException(thread, throwable);
+            }
+        });
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-<<<<<<< HEAD
-        
-=======
-    	Intent intent1 = new Intent(this,AlarmStartService.class);
-    	startService(intent1);
+
+    	//Intent intent1 = new Intent(this,AlarmStartService.class);
+    	//startService(intent1);
 //       		i.putExtra("KEY1", "Value to be used by the service");
->>>>>>> cd4744c8e494cc4721e8663ee69acf50d70e397b
+
     	receiver = new MyBroadcastReceiver();
     	
     	IntentFilter intentFilter = new IntentFilter("Response");
@@ -77,12 +94,20 @@ public class MainActivity extends Activity {
      @Override
         protected void onStart() {
             super.onStart();
+            SharedPreferences sp = getSharedPreferences(ACTIVE_CHECK, Context.MODE_PRIVATE);
+            Editor ed = sp.edit();
+            ed.putBoolean("active", true);
+            ed.commit();
             //mLocationClient.connect();
         }
      @Override
         protected void onStop() {
             super.onStop();
             //mLocationClient.disconnect();
+            SharedPreferences sp = getSharedPreferences(ACTIVE_CHECK, Context.MODE_PRIVATE);
+            Editor ed = sp.edit();
+            ed.putBoolean("active", false);
+            ed.commit();
         }
       
      @Override

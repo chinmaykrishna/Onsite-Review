@@ -4,21 +4,17 @@
     android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
     android:versionCode="1"
     android:versionName="1.0" >
-
+<!-- minSdk changed for supporting notification -->
     <uses-sdk
-        android:minSdkVersion="9"
-<<<<<<< HEAD
-        android:targetSdkVersion="21" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-=======
+        
+        android:minSdkVersion="16" 
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" >
     </uses-permission>
->>>>>>> cd4744c8e494cc4721e8663ee69acf50d70e397b
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -35,14 +31,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
-        <meta-data android:name="com.google.android.gms.version"
-        android:value="@integer/google_play_services_version" />
-         <service
-  			android:name=".LocationService"/>
+
          <receiver
       android:name=".MyBroadcastReceiver" />
-=======
+
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -65,7 +57,7 @@
                 </action>
             </intent-filter>
         </receiver>
->>>>>>> cd4744c8e494cc4721e8663ee69acf50d70e397b
+
     </application>
 
 </manifest>

@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -43,6 +44,7 @@ public class LocationService extends IntentService
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
 	String answer = null, restaurantName = null;
+	 public static final String ACTIVE_CHECK ="active_check";
 	
 	Intent intent;
 	int counter = 0;
@@ -63,7 +65,7 @@ public class LocationService extends IntentService
     {      
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();        
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -77,7 +79,7 @@ public class LocationService extends IntentService
 	protected void onHandleIntent(Intent intent) {
     	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();        
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -241,6 +243,12 @@ public class LocationService extends IntentService
 	        		}
 	        		
 	        	}
+	            SharedPreferences sp = getSharedPreferences(ACTIVE_CHECK, Context.MODE_PRIVATE);
+	            if(!(sp.getBoolean("active", false)))
+	            {
+	            	ReviewNotifier notice=new ReviewNotifier();
+	            	notice.createNotification(getApplicationContext());
+	            }
 	            intent = new Intent();
 	            intent.setAction("Response");
 	            intent.addCategory(Intent.CATEGORY_DEFAULT);
