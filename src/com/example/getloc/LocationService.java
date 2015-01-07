@@ -65,8 +65,8 @@ public class LocationService extends IntentService
     {      
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();        
-        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
+       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
           		        StrictMode.setThreadPolicy(policy);
@@ -79,7 +79,7 @@ public class LocationService extends IntentService
 	protected void onHandleIntent(Intent intent) {
     	locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();        
-        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -147,7 +147,7 @@ public class LocationService extends IntentService
 	            Log.d("long", lngVal);
 	            
 	            
-	            while(radius<=15)
+	            while(radius<=20)
 	     		{
 	                ArrayList<Restaurant> restaurant_list= new ArrayList<Restaurant>();
 	        		
@@ -204,17 +204,30 @@ public class LocationService extends IntentService
 	        			else if(radius == 10 && p>=1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 20;
+	        				radius = 25;
 	        			}
 	        			if(radius==15 && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
 	        				radius = 20;
-	        				break;
-	        			}else if(radius==15 && p>=1)
-	        			{
-	        				radius = 20;
+	        				continue;
 	        			}
+	        			else if(radius==15 && p>=1)
+	        			{
+	        				Log.d(TAG, radius+"m");
+	        				radius = 25;
+	        			}
+	        			if(radius==20 && p<1)
+	        			{
+	        				break;
+	        			}
+	        			else if(radius==20 && p>=1)
+	        			{
+	        				Log.d(TAG, radius+"m");
+	        				radius = 25;
+	        				
+	        			}
+	        				
 	        			
 	        			for(int i=0; i<p;i++)
 	        			{
@@ -244,7 +257,7 @@ public class LocationService extends IntentService
 	        		
 	        	}
 	            SharedPreferences sp = getSharedPreferences(ACTIVE_CHECK, Context.MODE_PRIVATE);
-	            if(!(sp.getBoolean("active", false)))
+	            if((!(sp.getBoolean("active", false))) && restaurantName!=null)
 	            {
 	            	ReviewNotifier notice=new ReviewNotifier();
 	            	notice.createNotification(getApplicationContext());

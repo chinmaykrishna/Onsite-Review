@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
         	  Calendar cal = Calendar.getInstance();
               cal.setTimeInMillis(System.currentTimeMillis());
         	  AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10*1000, pintent);
+        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60*1000, pintent);
     		  Log.d(TAG, "inside");
     		  editor.putString(FIRST, "no");
           }
@@ -148,7 +148,7 @@ public class MainActivity extends Activity {
 	   		   txtLat.setText(restaurantName);
 	   		   if(restaurantName.equals(shared.getString(CHECK1, "")))
 	   			   {
-	   			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <12*1000)
+	   			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <72*1000)
 	   			   		{
 	   			   			txtLat.setText("You are ready to review "+ restaurantName);Log.d(TAG, "festing");
 	   			   			editor.putBoolean(REVIEW, true);
