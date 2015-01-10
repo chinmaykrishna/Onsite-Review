@@ -32,6 +32,9 @@ import android.widget.Toast;
 public class LocationService extends IntentService 
 {
 	public static final String BROADCAST_ACTION = "Hello World";
+	public static final int INNER_RADIUS = 15;
+	public static final int OUTER_RADIUS = 25;
+	public static final int LOOP_RADIUS = 35;
 	private static final int TWO_MINUTES = 1000 * 60 * 2;
 	public LocationManager locationManager;
 	public MyLocationListener listener;
@@ -68,7 +71,7 @@ public class LocationService extends IntentService
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
           		        StrictMode.setThreadPolicy(policy);
-		radius = 10;
+		radius = INNER_RADIUS;
 		restaurantName = null;
 		answer = null;
     }
@@ -79,6 +82,7 @@ public class LocationService extends IntentService
         listener = new MyLocationListener();        
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+        Log.d(TAG, "inside");
         StrictMode.ThreadPolicy policy = new
           		 StrictMode.ThreadPolicy.Builder().permitAll().build();
           		        StrictMode.setThreadPolicy(policy);
@@ -139,13 +143,16 @@ public class LocationService extends IntentService
 	        if(isBetterLocation(loc, previousBestLocation)) {
 	            loc.getLatitude();
 	            loc.getLongitude(); 
+	            loc.getAccuracy();
 	            String lngVal = Double.toString(loc.getLongitude());
 	            String latVal = Double.toString(loc.getLatitude());
+	            String accuracy = Float.toString(loc.getAccuracy());
 	            Log.d("lat", latVal);
 	            Log.d("long", lngVal);
+	            Log.d("accuracy", accuracy);
+	            locationManager.removeUpdates(listener);
 	            
-	            
-	            while(radius<=15)
+	            while(radius<=OUTER_RADIUS)
 	     		{
 	                ArrayList<Restaurant> restaurant_list= new ArrayList<Restaurant>();
 	        		
@@ -193,25 +200,25 @@ public class LocationService extends IntentService
 	        			p=placesArray.length();
 	        			Log.d(TAG, String.valueOf(placesArray.length()));
 	        			Log.d(TAG, radius+"");
-	        			if(radius == 10 && p<1)
+	        			if(radius == INNER_RADIUS && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 15;
+	        				radius = OUTER_RADIUS;
 	        				continue;
 	        			}
-	        			else if(radius == 10 && p>=1)
+	        			else if(radius == INNER_RADIUS && p>=1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 20;
+	        				radius = LOOP_RADIUS;
 	        			}
-	        			if(radius==15 && p<1)
+	        			if(radius==OUTER_RADIUS && p<1)
 	        			{
 	        				Log.d(TAG, radius+"m");
-	        				radius = 20;
+	        				radius = LOOP_RADIUS;
 	        				break;
-	        			}else if(radius==15 && p>=1)
+	        			}else if(radius==OUTER_RADIUS && p>=1)
 	        			{
-	        				radius = 20;
+	        				radius = LOOP_RADIUS;
 	        			}
 	        			
 	        			for(int i=0; i<p;i++)
@@ -220,7 +227,8 @@ public class LocationService extends IntentService
 	        				double latitude;
 	        				double longitude;
 	        				Restaurant restaurant= new Restaurant();
-	
+	        				if(i==0)
+	        					answer = "";
 	        				JSONObject placeObject= placesArray.getJSONObject(i);
 	        				JSONObject loc1= placeObject.getJSONObject("geometry").getJSONObject("location");
 	
@@ -247,10 +255,11 @@ public class LocationService extends IntentService
 	            intent.putExtra("flag", "res");
 	            intent.putExtra("Restaurant", answer);
 	            intent.putExtra("Longitude", lngVal);  
-	            intent.putExtra("Longitude", lngVal);   
+	            intent.putExtra("Longitude", lngVal);
+	            intent.putExtra("Accuracy", accuracy);
 	            sendBroadcast(intent);
 	     		Log.d(TAG, "finished");	     
-	     		locationManager.removeUpdates(listener);
+	     		
 	        }
 	    }
 		

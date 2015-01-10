@@ -14,7 +14,10 @@ import android.content.SharedPreferences.Editor;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
  
 public class MainActivity extends Activity {
  
@@ -23,15 +26,15 @@ public class MainActivity extends Activity {
 	String answer = "You are near ";
 	String notFound = "Restaurant not found";
 	long time1;
-	String latitude = null, longitude = null;
-    TextView txtLong,txtLat;
+	String latitude = null, longitude = null, accuracy = null;
+    TextView txtLong,txtLat,txtAccuracy;
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String FIRST = "firstrun"; 
     public static final String CHECK1 = "restaurant1"; 
     public static final String TIME = "time";
     public static final String REVIEW = "review";
     SharedPreferences shared;
-    
+    Button btn;
     private MyBroadcastReceiver receiver;
       
     @Override
@@ -49,22 +52,31 @@ public class MainActivity extends Activity {
     	  Log.d(TAG, "before edit");
     	  Editor editor = shared.edit();
     	  Log.d(TAG, "after edit");
+    	  Intent intent = new Intent(this, LocationService.class);
+    	  intent.putExtra("flag", "alarm");
+    	  PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+    	  AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
     	  if (!shared.contains(FIRST))
           {
-    		  Intent intent = new Intent(this, LocationService.class);
-        	  intent.putExtra("flag", "alarm");
-        	  PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
         	  Calendar cal = Calendar.getInstance();
               cal.setTimeInMillis(System.currentTimeMillis());
-        	  AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10*1000, pintent);
+        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
     		  Log.d(TAG, "inside");
     		  editor.putString(FIRST, "no");
           }
+    	  else
+    	  {
+    		  alarm.cancel(pintent);
+    		  Calendar cal = Calendar.getInstance();
+              cal.setTimeInMillis(System.currentTimeMillis());
+        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
+    	  }
     	  if(shared.getBoolean(REVIEW, false))
     	  {
     		  txtLat = (TextView) findViewById(R.id.txtLat);
     		  txtLat.setText("You are ready to review "+shared.getString(CHECK1, ""));
+    		  btn = (Button) findViewById(R.id.button1);
+    		  btn.setEnabled(false);
     	  }
     	  editor.commit();
     }
@@ -99,6 +111,22 @@ public class MainActivity extends Activity {
    		String flag = intent.getStringExtra("flag");
    		if(flag.equals("alarm"))
    		{
+   			Calendar cal = Calendar.getInstance();
+   			int hour = cal.get(Calendar.HOUR_OF_DAY);
+   			if(0<=hour && hour<7)
+   			{
+   				Intent intent2 = new Intent(context, LocationService.class);
+   	    	  intent.putExtra("flag", "alarm");
+   	    	  PendingIntent pintent = PendingIntent.getService(context, 0, intent2, 0);
+   	    	  AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+   	    	  alarm.cancel(pintent);
+   	    	cal.set(Calendar.HOUR_OF_DAY, 7);
+   	    	cal.set(Calendar.MINUTE, 00);
+   	    	cal.set(Calendar.SECOND, 00);
+   	    	alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
+   			}
+   				
+   			
 	   		Intent i = new Intent(context, MainActivity.class);
 	        context.startService(i);
 	        Log.d(TAG, "alarm");
@@ -107,9 +135,18 @@ public class MainActivity extends Activity {
    		{
 	   	   latitude = intent.getStringExtra("Latitude");
 	   	   longitude = intent.getStringExtra("Longitude");
+	   	   accuracy = intent.getStringExtra("Accuracy");
 	   	   restaurantName = intent.getStringExtra("Restaurant");
 	   	   txtLat = (TextView) findViewById(R.id.txtLat);
-			   
+	   	   txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
+	   	   txtAccuracy.setText(accuracy);
+	   	   btn.setEnabled(true);
+	   	btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	Toast.makeText(getApplicationContext(), "Review has been sent for verification",
+            			   Toast.LENGTH_LONG).show();
+            }
+        });
 	
 	   	   if(restaurantName!= null)
 	   	   {
@@ -117,7 +154,7 @@ public class MainActivity extends Activity {
 	   		   txtLat.setText(restaurantName);
 	   		   if(restaurantName.equals(shared.getString(CHECK1, "")))
 	   			   {
-	   			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <12*1000)
+	   			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <20*60*1000)
 	   			   		{
 	   			   			txtLat.setText("You are ready to review "+ restaurantName);Log.d(TAG, "festing");
 	   			   			editor.putBoolean(REVIEW, true);
