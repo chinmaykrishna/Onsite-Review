@@ -64,19 +64,13 @@ public class MainActivity extends Activity {
     		  Log.d(TAG, "inside");
     		  editor.putString(FIRST, "no");
           }
-    	  else
-    	  {
-    		  alarm.cancel(pintent);
-    		  Calendar cal = Calendar.getInstance();
-              cal.setTimeInMillis(System.currentTimeMillis());
-        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
-    	  }
     	  if(shared.getBoolean(REVIEW, false))
     	  {
     		  txtLat = (TextView) findViewById(R.id.txtLat);
     		  txtLat.setText("You are ready to review "+shared.getString(CHECK1, ""));
     		  btn = (Button) findViewById(R.id.button1);
     		  btn.setEnabled(false);
+    		  editor.putBoolean(REVIEW, false);
     	  }
     	  editor.commit();
     }
@@ -172,7 +166,9 @@ public class MainActivity extends Activity {
 	   	   }
 	   	   else
 	   	   {
-	   		   txtLat.setText("Restaurant not found");Log.d(TAG, "resting");
+	   		   float timeLeft  = (System.currentTimeMillis() - shared.getLong(TIME, 0))/6000;
+	   		   int minutesLeft = (int)timeLeft;
+	   		   txtLat.setText("Searching in "+minutesLeft+" minutes");Log.d(TAG, "resting");
 	   	   }
    		}
    	  }
