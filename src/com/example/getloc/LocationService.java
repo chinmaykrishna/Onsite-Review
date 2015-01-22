@@ -52,7 +52,7 @@ public class LocationService extends IntentService
 	int radius;
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
-	String answer = null, restaurantName = null;
+	String answer = "", restaurantName = null;
 	SharedPreferences shared;
 	
 	Intent intent;
@@ -81,7 +81,7 @@ public class LocationService extends IntentService
           		        StrictMode.setThreadPolicy(policy);
 		radius = INNER_RADIUS;
 		restaurantName = null;
-		answer = null;
+		answer = "";
     }
 
     @Override
@@ -261,34 +261,33 @@ public class LocationService extends IntentService
 	            intent.setAction("Response");
 	            intent.addCategory(Intent.CATEGORY_DEFAULT);
 	            intent.putExtra("flag", "res");
-	            
 	            intent.putExtra("Longitude", lngVal);  
 	            intent.putExtra("Longitude", lngVal);
 	            intent.putExtra("Accuracy", accuracy);
 	            shared = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 	      	  	
-	            if(!answer.equals(null) )
+	            if(!answer.equals("") )
 	 	   	   	{
 	 	   		   Editor editor = shared.edit();
 //	 	   		   txtLat.setText(restaurantName);
 	 	   		   
-	 	   		Log.d(TAG, "testing1");
+	 	   		
 	 	   		   if(answer.equals(shared.getString(CHECK1, "")))
-	    			   {
-	    			   		Log.d(TAG, "review ready");
-	    			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <20*60*1000)
-	    			   		{
+    			   {
+    			   		Log.d(TAG, "review ready");
+    			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <2*60*1000)
+    			   		{
 //	    			   			txtLat.setText("You are ready to review "+ shared.getString(CHECK1, ""));
-	    			   			answer = "You are ready to review "+answer;
-	    			   			Log.d(TAG, "festing");
-	    			   			editor.putBoolean(REVIEW, true);
-	    			   		}
-	    			   		else
-	    			   		{
-	    			   			
-	    			   			editor.putBoolean(REVIEW, false);
-	    			   		}
-	    			   }
+    			   			answer = "You are ready to review "+answer;
+    			   			Log.d(TAG, "festing");
+    			   			editor.putBoolean(REVIEW, true);
+    			   		}
+    			   		else
+    			   		{
+    			   			
+    			   			editor.putBoolean(REVIEW, false);
+    			   		}
+    			   }
 	 		      editor.putString(CHECK1, answer);
 	 		      editor.putLong(TIME, System.currentTimeMillis());
 	 			  editor.commit();

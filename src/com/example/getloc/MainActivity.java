@@ -58,11 +58,11 @@ public class MainActivity extends Activity {
           {
         	  Calendar cal = Calendar.getInstance();
               cal.setTimeInMillis(System.currentTimeMillis());
-        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
+        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1*60*1000, pintent);
     		  editor.putString(FIRST, "no");
           }
     	  txtLat = (TextView) findViewById(R.id.txtLat);
-		  txtLat.setText(shared.getString(CHECK1, ""));
+		  txtLat.setText(shared.getString(CHECK1, "Searching..."));
     	  if(shared.getBoolean(REVIEW, false))
     	  {
     		  txtLat = (TextView) findViewById(R.id.txtLat);
@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
    	    	cal.set(Calendar.HOUR_OF_DAY, 7);
    	    	cal.set(Calendar.MINUTE, 00);
    	    	cal.set(Calendar.SECOND, 00);
-   	    	alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
+   	    	alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1*60*1000, pintent);
    			}
    				
    			
@@ -133,8 +133,11 @@ public class MainActivity extends Activity {
 	   	   accuracy = intent.getStringExtra("Accuracy");
 	   	   restaurantName = intent.getStringExtra("Restaurant");
 	   	   txtLat = (TextView) findViewById(R.id.txtLat);
-	   	   Log.d(TAG,restaurantName);
-	   	txtLat.setText(restaurantName);
+	   	   if(!restaurantName.equals(""));
+	   	   {
+		   	   Log.d(TAG,restaurantName);
+		   	   txtLat.setText(restaurantName);
+	   	   }
 //	   	   txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
 //	   	   txtAccuracy.setText(accuracy);
 //	   	   btn.setEnabled(true);
