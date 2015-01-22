@@ -34,9 +34,9 @@ import android.widget.Toast;
 public class LocationService extends IntentService 
 {
 	public static final String BROADCAST_ACTION = "Hello World";
-	public static final int INNER_RADIUS = 500;
-	public static final int OUTER_RADIUS = 750;
-	public static final int LOOP_RADIUS = 1000;
+	public static final int INNER_RADIUS = 15;
+	public static final int OUTER_RADIUS = 25;
+	public static final int LOOP_RADIUS = 35;
 	private static final int TWO_MINUTES = 1000 * 60 * 2;
 	public LocationManager locationManager;
 	public MyLocationListener listener;
@@ -276,7 +276,7 @@ public class LocationService extends IntentService
 	 	   		   if(answer.equals(shared.getString(CHECK1, "")))
 	    			   {
 	    			   		Log.d(TAG, "review ready");
-	    			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <2*60*1000)
+	    			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <20*60*1000)
 	    			   		{
 //	    			   			txtLat.setText("You are ready to review "+ shared.getString(CHECK1, ""));
 	    			   			answer = "You are ready to review "+answer;
