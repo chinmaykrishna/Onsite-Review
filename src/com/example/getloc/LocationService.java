@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -32,20 +34,26 @@ import android.widget.Toast;
 public class LocationService extends IntentService 
 {
 	public static final String BROADCAST_ACTION = "Hello World";
-	public static final int INNER_RADIUS = 15;
-	public static final int OUTER_RADIUS = 25;
-	public static final int LOOP_RADIUS = 35;
+	public static final int INNER_RADIUS = 500;
+	public static final int OUTER_RADIUS = 750;
+	public static final int LOOP_RADIUS = 1000;
 	private static final int TWO_MINUTES = 1000 * 60 * 2;
 	public LocationManager locationManager;
 	public MyLocationListener listener;
 	public Location previousBestLocation = null;
 	private static String TAG= "getloc";
+	public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String FIRST = "firstrun"; 
+    public static final String CHECK1 = "restaurant1"; 
+    public static final String TIME = "time";
+    public static final String REVIEW = "review";
 	int p = 0;
 	long time1;
 	int radius;
 	String placesSearchStr = null;
 	TextView txtLong,txtLat;
 	String answer = null, restaurantName = null;
+	SharedPreferences shared;
 	
 	Intent intent;
 	int counter = 0;
@@ -253,13 +261,47 @@ public class LocationService extends IntentService
 	            intent.setAction("Response");
 	            intent.addCategory(Intent.CATEGORY_DEFAULT);
 	            intent.putExtra("flag", "res");
-	            intent.putExtra("Restaurant", answer);
+	            
 	            intent.putExtra("Longitude", lngVal);  
 	            intent.putExtra("Longitude", lngVal);
 	            intent.putExtra("Accuracy", accuracy);
+	            shared = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+	      	  	
+	            if(!answer.equals(null) )
+	 	   	   	{
+	 	   		   Editor editor = shared.edit();
+//	 	   		   txtLat.setText(restaurantName);
+	 	   		   
+	 	   		Log.d(TAG, "testing1");
+	 	   		   if(answer.equals(shared.getString(CHECK1, "")))
+	    			   {
+	    			   		Log.d(TAG, "review ready");
+	    			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <2*60*1000)
+	    			   		{
+//	    			   			txtLat.setText("You are ready to review "+ shared.getString(CHECK1, ""));
+	    			   			answer = "You are ready to review "+answer;
+	    			   			Log.d(TAG, "festing");
+	    			   			editor.putBoolean(REVIEW, true);
+	    			   		}
+	    			   		else
+	    			   		{
+	    			   			
+	    			   			editor.putBoolean(REVIEW, false);
+	    			   		}
+	    			   }
+	 		      editor.putString(CHECK1, answer);
+	 		      editor.putLong(TIME, System.currentTimeMillis());
+	 			  editor.commit();
+
+	 	   	   }
+	 	   	   else
+	 	   	   {
+	 	   		   float timeLeft  = (System.currentTimeMillis() - shared.getLong(TIME, 0))/6000;
+	 	   		   int minutesLeft = (int)timeLeft;
+//	 	   		   txtLat.setText("Searching in "+minutesLeft+" minutes");Log.d(TAG, "resting");
+	 	   	   }
+	            intent.putExtra("Restaurant", answer);
 	            sendBroadcast(intent);
-	     		Log.d(TAG, "finished");	     
-	     		
 	        }
 	    }
 		

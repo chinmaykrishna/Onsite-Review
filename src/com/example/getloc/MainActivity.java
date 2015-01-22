@@ -27,14 +27,14 @@ public class MainActivity extends Activity {
 	String notFound = "Restaurant not found";
 	long time1;
 	String latitude = null, longitude = null, accuracy = null;
-    TextView txtLong,txtLat,txtAccuracy;
+    TextView txtLong,txtLat;
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String FIRST = "firstrun"; 
     public static final String CHECK1 = "restaurant1"; 
     public static final String TIME = "time";
     public static final String REVIEW = "review";
     SharedPreferences shared;
-    Button btn;
+//    Button btn;
     private MyBroadcastReceiver receiver;
       
     @Override
@@ -49,9 +49,7 @@ public class MainActivity extends Activity {
     	  intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
     	  registerReceiver(receiver, intentFilter);
     	  shared = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-    	  Log.d(TAG, "before edit");
     	  Editor editor = shared.edit();
-    	  Log.d(TAG, "after edit");
     	  Intent intent = new Intent(this, LocationService.class);
     	  intent.putExtra("flag", "alarm");
     	  PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
@@ -60,16 +58,16 @@ public class MainActivity extends Activity {
           {
         	  Calendar cal = Calendar.getInstance();
               cal.setTimeInMillis(System.currentTimeMillis());
-        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
-    		  Log.d(TAG, "inside");
+        	  alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1*60*1000, pintent);
     		  editor.putString(FIRST, "no");
           }
     	  if(shared.getBoolean(REVIEW, false))
     	  {
     		  txtLat = (TextView) findViewById(R.id.txtLat);
     		  txtLat.setText("You are ready to review "+shared.getString(CHECK1, ""));
-    		  btn = (Button) findViewById(R.id.button1);
-    		  btn.setEnabled(false);
+//    		  btn = (Button) findViewById(R.id.button1);
+//    		  btn.setEnabled(false);
+    		  Log.d(TAG, "inside");
     		  editor.putBoolean(REVIEW, false);
     	  }
     	  editor.commit();
@@ -101,8 +99,9 @@ public class MainActivity extends Activity {
 
    	  @Override
    	  public void onReceive(Context context, Intent intent) {
-   		
+   		shared = context.getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE);
    		String flag = intent.getStringExtra("flag");
+
    		if(flag.equals("alarm"))
    		{
    			Calendar cal = Calendar.getInstance();
@@ -117,7 +116,7 @@ public class MainActivity extends Activity {
    	    	cal.set(Calendar.HOUR_OF_DAY, 7);
    	    	cal.set(Calendar.MINUTE, 00);
    	    	cal.set(Calendar.SECOND, 00);
-   	    	alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15*60*1000, pintent);
+   	    	alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1*60*1000, pintent);
    			}
    				
    			
@@ -132,44 +131,50 @@ public class MainActivity extends Activity {
 	   	   accuracy = intent.getStringExtra("Accuracy");
 	   	   restaurantName = intent.getStringExtra("Restaurant");
 	   	   txtLat = (TextView) findViewById(R.id.txtLat);
-	   	   txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
-	   	   txtAccuracy.setText(accuracy);
-	   	   btn.setEnabled(true);
-	   	btn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	Toast.makeText(getApplicationContext(), "Review has been sent for verification",
-            			   Toast.LENGTH_LONG).show();
-            }
-        });
-	
-	   	   if(restaurantName!= null)
-	   	   {
-	   		   Editor editor = shared.edit();
-	   		   txtLat.setText(restaurantName);
-	   		   if(restaurantName.equals(shared.getString(CHECK1, "")))
-	   			   {
-	   			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <20*60*1000)
-	   			   		{
-	   			   			txtLat.setText("You are ready to review "+ restaurantName);Log.d(TAG, "festing");
-	   			   			editor.putBoolean(REVIEW, true);
-	   			   		}
-	   			   		else
-	   			   		{
-	   			   			editor.putBoolean(REVIEW, false);
-	   			   		}
-	   			   }
-		 	  
-		      editor.putString(CHECK1, restaurantName);
-		      editor.putLong(TIME, System.currentTimeMillis());
-			  editor.commit();
-
-	   	   }
-	   	   else
-	   	   {
-	   		   float timeLeft  = (System.currentTimeMillis() - shared.getLong(TIME, 0))/6000;
-	   		   int minutesLeft = (int)timeLeft;
-	   		   txtLat.setText("Searching in "+minutesLeft+" minutes");Log.d(TAG, "resting");
-	   	   }
+	   	   Log.d(TAG,shared.getString(CHECK1, ""));
+	   	txtLat.setText(restaurantName);
+//	   	   txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
+//	   	   txtAccuracy.setText(accuracy);
+//	   	   btn.setEnabled(true);
+	   	
+//	   	btn.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//            	Toast.makeText(getApplicationContext(), "Review has been sent for verification",
+//            			   Toast.LENGTH_LONG).show();
+//            }
+//        });
+//	   	   if(restaurantName!= null)
+//	   	   {
+//	   		   Editor editor = shared.edit();
+//	   		   txtLat.setText(restaurantName);
+//	   		   if(restaurantName.equals(shared.getString(CHECK1, "")))
+//   			   {
+//   			   		Log.d(TAG, "review ready");
+//   			   		if((System.currentTimeMillis() - shared.getLong(TIME, 0))  <2*60*1000)
+//   			   		{
+//   			   			txtLat.setText("You are ready to review "+ shared.getString(CHECK1, ""));Log.d(TAG, "festing");
+//   			   			editor.putBoolean(REVIEW, true);
+//   			   		}
+//   			   		else
+//   			   		{
+//   			   			
+//   			   			editor.putBoolean(REVIEW, false);
+//   			   		}
+//   			   }
+//	   		
+//		      editor.putString(CHECK1, restaurantName);
+//		      editor.putLong(TIME, System.currentTimeMillis());
+//			  editor.commit();
+//			  
+//
+//	   	   }
+//	   	   else
+//	   	   {
+//	   		   float timeLeft  = (System.currentTimeMillis() - shared.getLong(TIME, 0))/6000;
+//	   		   int minutesLeft = (int)timeLeft;
+//	   		   txtLat.setText("Searching in "+minutesLeft+" minutes");Log.d(TAG, "resting");
+//	   	   }
+	   	
    		}
    	  }
    }

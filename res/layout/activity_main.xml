@@ -9,24 +9,5 @@
         android:layout_height="wrap_content"
         android:text="Searching..."
         android:textSize="24dp" />
-
-    <TextView
-        android:id="@+id/txtAccuracy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/txtLat"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="83dp"
-        android:text="TextView"
-        android:textSize="@dimen/abc_text_size_body_1_material" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/txtAccuracy"
-        android:text="Review" />
  
 </RelativeLayout>
